@@ -15,7 +15,7 @@ API_URL = "http://localhost:8000"
 def create_test_image():
     """Create a simple test image."""
     # Create a simple colored image
-    img = Image.new('RGB', (224, 224), color=(254, 100, 100))
+    img = Image.new('RGB', (224, 224), color=(255, 100, 100))
     img_byte_arr = io.BytesIO()
     img.save(img_byte_arr, format='JPEG')
     img_byte_arr.seek(0)
