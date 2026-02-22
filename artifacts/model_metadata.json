@@ -1,0 +1,14 @@
+{
+  "model_name": "baseline",
+  "best_val_acc": 1.0,
+  "model_summary": {
+    "model_class": "BaselineCNN",
+    "total_parameters": 26081026,
+    "trainable_parameters": 26081026,
+    "model_size_mb": 99.49121856689453
+  },
+  "class_names": [
+    "cat",
+    "dog"
+  ]
+}

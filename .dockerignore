@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Data
+data/raw/
+data/processed/
+*.csv
+
+# ML artifacts
+mlruns/
+artifacts/*.png
+evaluation/
+
+# Tests
+tests/
+htmlcov/
+.coverage
+.pytest_cache/
+*.log
+
+# Git
+.git/
+.gitignore
+.github/
+
+# DVC
+.dvc/cache/
+
+# Documentation
+*.md
+docs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# CI/CD
+.github/
+
+# Scripts
+scripts/
+
+# Deployment files
+deployment/
+docker-compose.yml
+Makefile

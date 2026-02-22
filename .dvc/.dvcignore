@@ -1,0 +1,21 @@
+# Add patterns of files dvc should ignore, which could improve
+# the performance. Learn more at
+# https://dvc.org/doc/user-guide/dvcignore
+
+# DVC files
+*.dvc
+
+# Python files
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Model checkpoints (track only best models)
+models/checkpoints/
+
+# Logs
+*.log
+logs/
+
+# Test files
+tests/

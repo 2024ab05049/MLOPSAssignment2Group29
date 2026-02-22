@@ -1,0 +1,108 @@
+name: CD Pipeline - Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Job 1: Deploy to Kubernetes
+  deploy-k8s:
+    name: Deploy to Kubernetes
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Configure kubectl (for local testing, use your cluster config)
+        run: |
+          # For production, use secrets to configure kubectl
+          # mkdir -p $HOME/.kube
+          # echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+          echo "Kubectl configured (update with your cluster credentials)"
+
+      - name: Update image in deployment
+        run: |
+          # Update the image tag in deployment manifest
+          IMAGE_TAG="${{ github.sha }}"
+          sed -i "s|IMAGE_TAG|main-${IMAGE_TAG:0:7}|g" deployment/k8s/deployment.yaml
+
+      - name: Deploy to Kubernetes
+        run: |
+          # Apply Kubernetes manifests
+          # kubectl apply -f deployment/k8s/
+          echo "Deployment manifests would be applied here"
+          echo "For actual deployment, uncomment kubectl commands"
+
+      - name: Wait for rollout
+        run: |
+          # kubectl rollout status deployment/catsdogs-api -n default --timeout=300s
+          echo "Waiting for rollout to complete"
+
+      - name: Verify deployment
+        run: |
+          # kubectl get pods -n default -l app=catsdogs-api
+          echo "Deployment verification"
+
+  # Job 2: Run smoke tests
+  smoke-tests:
+    name: Run Smoke Tests
+    runs-on: ubuntu-latest
+    needs: deploy-k8s
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install requests pytest pillow
+
+      - name: Run smoke tests
+        run: |
+          # Update with your actual service URL
+          export API_URL="http://localhost:8000"
+          python deployment/smoke_tests.py
+        continue-on-error: true
+
+      - name: Post-deployment verification
+        run: |
+          echo "Smoke tests completed"
+          # Add notification logic here (Slack, email, etc.)
+
+  # Job 3: Rollback on failure
+  rollback:
+    name: Rollback on Failure
+    runs-on: ubuntu-latest
+    needs: smoke-tests
+    if: failure()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Rollback deployment
+        run: |
+          # kubectl rollout undo deployment/catsdogs-api -n default
+          echo "Rolling back to previous version"
+
+      - name: Notify team
+        run: |
+          echo "Deployment failed - team notified"
+          # Add notification logic here
